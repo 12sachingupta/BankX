@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: bankx
+      POSTGRES_DB: bankx
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+  auth:
+    build: ./services/auth
+    environment:
+      DATABASE_URL: postgres://postgres:bankx@postgres:5432/bankx
+    depends_on:
+      - postgres
+  web:
+    build: ./apps/web
+    ports:
+      - '3000:3000'
+    depends_on:
+      - auth
